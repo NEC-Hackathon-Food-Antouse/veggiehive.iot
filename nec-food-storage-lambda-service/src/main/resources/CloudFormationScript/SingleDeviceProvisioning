@@ -1,0 +1,235 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Metadata": {
+        "AWS::CloudFormation::Designer": {
+            "db9e4746-b138-4384-b6a4-ac87fdc4c70a": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 270,
+                    "y": 60
+                },
+                "z": 1,
+                "embeds": [],
+                "dependson": [
+                    "3ef29c4b-34df-4f93-b96e-c7747f632e69",
+                    "3ef29c4b-34df-4f93-b96e-c7747f632e79"
+                ]
+            },
+            "1534b5cc-cc6e-4b03-942c-2a2e7f016ef2": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 150,
+                    "y": 60
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "a998cea4-7b53-40d1-ada6-79dab088352e": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 150,
+                    "y": 180
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "3ef29c4b-34df-4f93-b96e-c7747f632e69": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 390,
+                    "y": 60
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "3ef29c4b-34df-4f93-b96e-c7747f632e79": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 490,
+                    "y": 60
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "03b062f9-e0e7-4119-8497-696f732727e2": {
+                "source": {
+                    "id": "1534b5cc-cc6e-4b03-942c-2a2e7f016ef2"
+                },
+                "target": {
+                    "id": "db9e4746-b138-4384-b6a4-ac87fdc4c70a"
+                },
+                "z": 1
+            },
+            "2e66876c-21e5-4fa5-a10d-0c7a8fedee64": {
+                "source": {
+                    "id": "1534b5cc-cc6e-4b03-942c-2a2e7f016ef2"
+                },
+                "target": {
+                    "id": "a998cea4-7b53-40d1-ada6-79dab088352e"
+                },
+                "z": 1
+            }
+        }
+    },
+    "Parameters": {
+        "ThingName": {
+            "Type": "String"
+        },
+        "CSR": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "I40Thing": {
+            "Type": "AWS::IoT::Thing",
+            "Properties": {
+                "ThingName": {
+                    "Ref": "ThingName"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "db9e4746-b138-4384-b6a4-ac87fdc4c70a"
+                }
+            },
+            "DependsOn": [
+                "I40TopicEventRule",
+                "I40TopicMeasurementsRule"
+            ]
+        },
+        "I40Certificate": {
+            "Type": "AWS::IoT::Certificate",
+            "Properties": {
+                "CertificateSigningRequest": {
+                    "Ref": "CSR"
+                },
+                "Status": "INACTIVE"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "1534b5cc-cc6e-4b03-942c-2a2e7f016ef2"
+                }
+            }
+        },
+        "I40Policy": {
+            "Type": "AWS::IoT::Policy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "iot:Connect",
+                                "iot:Receive",
+                                "iot:Publish",
+                                "iot:Subscribe"
+                            ],
+                            "Resource": [
+                                "arn:aws:iot:eu-central-1:534210446180:topic/i40/events",
+                                "arn:aws:iot:eu-central-1:534210446180:topic/i40/measurements"
+                            ]
+                        }
+                    ]
+                },
+                "PolicyName": "I40Policy"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "a998cea4-7b53-40d1-ada6-79dab088352e"
+                }
+            }
+        },
+        "I40TopicEventRule": {
+            "Type": "AWS::IoT::TopicRule",
+            "Properties": {
+                "RuleName": "MyIotEventsRule",
+                "TopicRulePayload": {
+                    "RuleDisabled": "false",
+                    "Sql": "SELECT * FROM 'i40/events'",
+                    "Actions": [
+                        {
+                            "Lambda": {
+                                "FunctionArn": "arn:aws:lambda:eu-central-1:534210446180:function:myIot40PlatformEventsLambda"
+                            }
+                        }
+                    ]
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "3ef29c4b-34df-4f93-b96e-c7747f632e69"
+                }
+            }
+        },
+        "I40TopicMeasurementsRule": {
+            "Type": "AWS::IoT::TopicRule",
+            "Properties": {
+                "RuleName": "MyIotMeasurementsRule",
+                "TopicRulePayload": {
+                    "RuleDisabled": "false",
+                    "Sql": "SELECT * FROM 'i40/measurements'",
+                    "Actions": [
+                        {
+                            "Lambda": {
+                                "FunctionArn": "arn:aws:lambda:eu-central-1:534210446180:function:myIot40PlatformMeasurementsLambda"
+                            }
+                        }
+                    ]
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "3ef29c4b-34df-4f93-b96e-c7747f632e79"
+                }
+            }
+        },
+        "i40PolicyPrincipalAttachment": {
+            "Type": "AWS::IoT::PolicyPrincipalAttachment",
+            "Properties": {
+                "Principal": {
+                    "Fn::GetAtt": ["I40Certificate", "Arn"]
+                },
+                "PolicyName": {
+                    "Ref": "I40Policy"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "2e66876c-21e5-4fa5-a10d-0c7a8fedee64"
+                }
+            }
+        },
+        "ThingPrincipalAttachment": {
+            "Type": "AWS::IoT::ThingPrincipalAttachment",
+            "Properties": {
+                "Principal": {
+                    "Fn::GetAtt": ["I40Certificate", "Arn"]
+                },
+                "ThingName": {
+                    "Ref": "I40Thing"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "03b062f9-e0e7-4119-8497-696f732727e2"
+                }
+            }
+        }
+    }
+}

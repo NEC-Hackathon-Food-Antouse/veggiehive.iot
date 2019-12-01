@@ -1,0 +1,6 @@
+1. Create Certificates and Certificate Signing Requests (CSRs)
+2. Create certificates and signing requests for our devices. 
+Example we will provision 1 device which will use individually unique certificates. 
+In this example, we’ll be using the openssl command on an AWS EC2 instance running Amazon Linux to create the certificates. 
+The commands below will create the certificate private key file and the CSR file for the device.
+openssl req -new -newkey rsa:2048 -nodes -keyout device_one.key -out device_one.csr -subj "/C=US/ST=WA/L=Seattle/O=MyOrg/CN=MyDept"
