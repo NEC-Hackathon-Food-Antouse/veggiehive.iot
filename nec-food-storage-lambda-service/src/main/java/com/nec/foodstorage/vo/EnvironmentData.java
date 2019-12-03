@@ -1,31 +1,32 @@
 package com.nec.foodstorage.vo;
 
 public class EnvironmentData {
-	private String temp;
-	private String humidity;
+
+	Temperature temperature;
+	Humidity humidity;
 
 	public EnvironmentData() {
 	}
 
-	public EnvironmentData(String temp, String humidity) {
-		super();
-		this.temp = temp;
-		this.humidity = humidity;
+	public Temperature getTemperature() {
+		return temperature;
 	}
 
-	public String getTemp() {
-		return temp;
+	public void setTemperature(Temperature temperature) {
+		this.temperature = temperature;
 	}
 
-	public void setTemp(String temp) {
-		this.temp = temp;
-	}
-
-	public String getHumidity() {
+	public Humidity getHumidity() {
 		return humidity;
 	}
 
-	public void setHumidity(String humidity) {
+	public void setHumidity(Humidity humidity) {
+		this.humidity = humidity;
+	}
+
+	public EnvironmentData(Temperature temperature, Humidity humidity) {
+		super();
+		this.temperature = temperature;
 		this.humidity = humidity;
 	}
 

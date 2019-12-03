@@ -13,13 +13,15 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.nec.foodstorage.helper.GetPropertyValues;
-import com.nec.foodstorage.vo.SlotEvent;
+import com.nec.foodstorage.vo.SlotEnvEvent;
+import com.nec.foodstorage.vo.SlotImageEvent;
 
 public class MongoDBOperations {
 	static Logger log = Logger.getLogger(MongoDBOperations.class.getName());
 	private static final String CONST_CONNECTION_STRING = "connectionstring";
 	private static final String CONST_DB_NAME = "dbname";
-	private static final String CONST_MACHINE_EVENTS = "slotEvents";
+	private static final String CONST_ENVIRONMENT_EVENTS = "slotEnvEvent";
+	private static final String CONST_IMAGE_EVENT = "slotImageEvent";
 	private static MongoClient mongoClient;
 	private static MongoDatabase database;
 
@@ -42,10 +44,23 @@ public class MongoDBOperations {
 		}
 	}
 
-	public static boolean createMachineEventsRecord(SlotEvent event) {
+	public static boolean createEnvironmentEventsRecord(SlotEnvEvent event) {
 		try {
 			// ---------- Creating Collection -------------------------//
-			MongoCollection<SlotEvent> table = database.getCollection(CONST_MACHINE_EVENTS, SlotEvent.class);
+			MongoCollection<SlotEnvEvent> table = database.getCollection(CONST_ENVIRONMENT_EVENTS, SlotEnvEvent.class);
+			// ----------- Inserting Data ------------------------------//
+			table.insertOne(event);
+			return true;
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+		return false;
+	}
+
+	public static boolean createImageEventsRecord(SlotImageEvent event) {
+		try {
+			// ---------- Creating Collection -------------------------//
+			MongoCollection<SlotImageEvent> table = database.getCollection(CONST_IMAGE_EVENT, SlotImageEvent.class);
 			// ----------- Inserting Data ------------------------------//
 			table.insertOne(event);
 			return true;
