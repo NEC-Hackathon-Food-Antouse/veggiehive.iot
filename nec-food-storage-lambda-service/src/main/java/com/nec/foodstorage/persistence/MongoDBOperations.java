@@ -13,6 +13,7 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.nec.foodstorage.helper.GetPropertyValues;
+import com.nec.foodstorage.vo.SlotAnalysisEvent;
 import com.nec.foodstorage.vo.SlotEnvEvent;
 import com.nec.foodstorage.vo.SlotImageEvent;
 
@@ -22,6 +23,7 @@ public class MongoDBOperations {
 	private static final String CONST_DB_NAME = "dbname";
 	private static final String CONST_ENVIRONMENT_EVENTS = "slotEnvEvent";
 	private static final String CONST_IMAGE_EVENT = "slotImageEvent";
+	private static final String CONST_VISION_EVENT = "slotAnalysisEvent";
 	private static MongoClient mongoClient;
 	private static MongoDatabase database;
 
@@ -61,6 +63,19 @@ public class MongoDBOperations {
 		try {
 			// ---------- Creating Collection -------------------------//
 			MongoCollection<SlotImageEvent> table = database.getCollection(CONST_IMAGE_EVENT, SlotImageEvent.class);
+			// ----------- Inserting Data ------------------------------//
+			table.insertOne(event);
+			return true;
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+		return false;
+	}
+
+	public static boolean createVisionResponseRecord(SlotAnalysisEvent event) {
+		try {
+			// ---------- Creating Collection -------------------------//
+			MongoCollection<SlotAnalysisEvent> table = database.getCollection(CONST_VISION_EVENT, SlotAnalysisEvent.class);
 			// ----------- Inserting Data ------------------------------//
 			table.insertOne(event);
 			return true;
