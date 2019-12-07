@@ -15,7 +15,7 @@ public class SlotAnalysisEvent {
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	protected LocalDateTime creationTimestamp;
-	private AnalysisData analysisData;
+	protected AnalysisData analysisData;
 
 	public SlotAnalysisEvent(String slotId, LocalDateTime creationTimestamp, AnalysisData analysisData) {
 		super();

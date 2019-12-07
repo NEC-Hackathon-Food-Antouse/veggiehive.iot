@@ -1,1 +1,0 @@
-NEC IoT Lambda Implementation

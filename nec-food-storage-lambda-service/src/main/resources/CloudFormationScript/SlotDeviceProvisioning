@@ -95,7 +95,7 @@
         }
     },
     "Resources": {
-        "I40Thing": {
+        "NECThing": {
             "Type": "AWS::IoT::Thing",
             "Properties": {
                 "ThingName": {
@@ -108,11 +108,12 @@
                 }
             },
             "DependsOn": [
-                "I40TopicEventRule",
-                "I40TopicMeasurementsRule"
+                "slotEnvEvents",
+                "slotImageEvents",
+				"slotAnalysisEvents"
             ]
         },
-        "I40Certificate": {
+        "NECCertificate": {
             "Type": "AWS::IoT::Certificate",
             "Properties": {
                 "CertificateSigningRequest": {
@@ -126,7 +127,7 @@
                 }
             }
         },
-        "I40Policy": {
+        "NECPolicy": {
             "Type": "AWS::IoT::Policy",
             "Properties": {
                 "PolicyDocument": {
@@ -141,13 +142,12 @@
                                 "iot:Subscribe"
                             ],
                             "Resource": [
-                                "arn:aws:iot:eu-central-1:534210446180:topic/i40/events",
-                                "arn:aws:iot:eu-central-1:534210446180:topic/i40/measurements"
+                                 "*"
                             ]
                         }
                     ]
                 },
-                "PolicyName": "I40Policy"
+                "PolicyName": "NECPolicy"
             },
             "Metadata": {
                 "AWS::CloudFormation::Designer": {
@@ -155,17 +155,17 @@
                 }
             }
         },
-        "I40TopicEventRule": {
+        "NECTopicEnvEventRule": {
             "Type": "AWS::IoT::TopicRule",
             "Properties": {
-                "RuleName": "MyIotEventsRule",
+                "RuleName": "MyIotEnvironmentRule",
                 "TopicRulePayload": {
                     "RuleDisabled": "false",
-                    "Sql": "SELECT * FROM 'i40/events'",
+                    "Sql": "SELECT * FROM 'slotEnvEvents'",
                     "Actions": [
                         {
                             "Lambda": {
-                                "FunctionArn": "arn:aws:lambda:eu-central-1:534210446180:function:myIot40PlatformEventsLambda"
+                                "FunctionArn": "arn:aws:lambda:XX-XXXXXX-X:XXXXXXXXXXXX:function:EnvironmentLambda"
                             }
                         }
                     ]
@@ -177,17 +177,17 @@
                 }
             }
         },
-        "I40TopicMeasurementsRule": {
+        "NECTopicImageRule": {
             "Type": "AWS::IoT::TopicRule",
             "Properties": {
-                "RuleName": "MyIotMeasurementsRule",
+                "RuleName": "MyIotImageRule",
                 "TopicRulePayload": {
                     "RuleDisabled": "false",
-                    "Sql": "SELECT * FROM 'i40/measurements'",
+                    "Sql": "SELECT * FROM 'slotImageEvents'",
                     "Actions": [
                         {
                             "Lambda": {
-                                "FunctionArn": "arn:aws:lambda:eu-central-1:534210446180:function:myIot40PlatformMeasurementsLambda"
+                                "FunctionArn": "arn:aws:lambda:XX-XXXXXX-X:XXXXXXXXXXXX:function:ImageLambda"
                             }
                         }
                     ]
@@ -199,14 +199,36 @@
                 }
             }
         },
-        "i40PolicyPrincipalAttachment": {
+		"NECTopicAnalysisRule": {
+            "Type": "AWS::IoT::TopicRule",
+            "Properties": {
+                "RuleName": "MyIotAnalysisRule",
+                "TopicRulePayload": {
+                    "RuleDisabled": "false",
+                    "Sql": "SELECT * FROM 'slotAnalysisEvents'",
+                    "Actions": [
+                        {
+                            "Lambda": {
+                                "FunctionArn": "arn:aws:lambda:XX-XXXXXX-X:XXXXXXXXXXXX:function:AnalysisLambda"
+                            }
+                        }
+                    ]
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "3ef29c4b-34df-4f93-b96e-c7747f632e79"
+                }
+            }
+        },
+        "NECPolicyPrincipalAttachment": {
             "Type": "AWS::IoT::PolicyPrincipalAttachment",
             "Properties": {
                 "Principal": {
-                    "Fn::GetAtt": ["I40Certificate", "Arn"]
+                    "Fn::GetAtt": ["NECCertificate", "Arn"]
                 },
                 "PolicyName": {
-                    "Ref": "I40Policy"
+                    "Ref": "NECPolicy"
                 }
             },
             "Metadata": {
@@ -219,10 +241,10 @@
             "Type": "AWS::IoT::ThingPrincipalAttachment",
             "Properties": {
                 "Principal": {
-                    "Fn::GetAtt": ["I40Certificate", "Arn"]
+                    "Fn::GetAtt": ["NECCertificate", "Arn"]
                 },
                 "ThingName": {
-                    "Ref": "I40Thing"
+                    "Ref": "NECThing"
                 }
             },
             "Metadata": {
